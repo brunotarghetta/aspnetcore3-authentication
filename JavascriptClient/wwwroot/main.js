@@ -1,9 +1,9 @@
 ﻿var config = {
     userStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
-    authority: "https://localhost:44305/",
+    authority: "http://localhost:81/identityserver",
     client_id: "client_id_js",
-    redirect_uri: "https://localhost:44345/Home/SignIn",
-    post_logout_redirect_uri: "https://localhost:44345/Home/Index",
+    redirect_uri: "http://localhost:81/JavascriptClient/Home/SignIn",
+    post_logout_redirect_uri: "http://localhost:81/JavascriptClient/Home/Index",
     response_type: "code",
     scope: "openid rc.scope ApiOne ApiTwo"
 };
@@ -26,7 +26,7 @@ userManager.getUser().then(user => {
 });
 
 var callApi = function () {
-    axios.get("https://localhost:44337/secret")
+    axios.get("http://localhost:81/apione/secret")
         .then(res => {
             console.log(res);
         });

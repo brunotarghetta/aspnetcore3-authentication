@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
@@ -12,10 +13,12 @@ namespace MvcClient.Controllers
     public class HomeController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _config;
 
-        public HomeController(IHttpClientFactory httpClientFactory)
+        public HomeController(IHttpClientFactory httpClientFactory, IConfiguration config)
         {
             _httpClientFactory = httpClientFactory;
+            _config = config;
         }
 
         public IActionResult Index()
@@ -52,7 +55,9 @@ namespace MvcClient.Controllers
 
             apiClient.SetBearerToken(accessToken);
 
-            var response = await apiClient.GetAsync("https://localhost:44337/secret");
+            var apiOneUrl = _config.GetSection("Servers").GetSection("ApiOne").Value;
+
+            var response = await apiClient.GetAsync($"{apiOneUrl}/secret");
 
             var content = await response.Content.ReadAsStringAsync();
 
@@ -61,8 +66,10 @@ namespace MvcClient.Controllers
 
         private async Task RefreshAccessToken()
         {
+            var identiyServerUrl = _config.GetSection("Servers").GetSection("IdentityServer").Value;
+
             var serverClient = _httpClientFactory.CreateClient();
-            var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync("https://localhost:44305/");
+            var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync(identiyServerUrl);
 
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var idToken = await HttpContext.GetTokenAsync("id_token");

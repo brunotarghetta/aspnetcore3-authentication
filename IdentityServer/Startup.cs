@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,11 +29,14 @@ namespace IdentityServer
 
             services.AddDbContext<AppDbContext>(config =>
             {
+                //Use SQL
                 config.UseSqlServer(connectionString);
+
+                //Use InMemory
                 //config.UseInMemoryDatabase("Memory");
             });
 
-            // AddIdentity registers the services
+            // AddIdentity registers the services            
             services.AddIdentity<IdentityUser, IdentityRole>(config =>
             {
                 config.Password.RequiredLength = 4;
@@ -57,27 +61,31 @@ namespace IdentityServer
 
             services.AddIdentityServer()
                 .AddAspNetIdentity<IdentityUser>()
-                //.AddConfigurationStore(options =>
-                //{
-                //    options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
-                //        sql => sql.MigrationsAssembly(assembly));
-                //})
-                //.AddOperationalStore(options =>
-                //{
-                //    options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
-                //        sql => sql.MigrationsAssembly(assembly));
-                //})
+
+                //Use SQL
+                .AddConfigurationStore(options =>
+                {
+                    options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
+                        sql => sql.MigrationsAssembly(assembly));
+                })
+                .AddOperationalStore(options =>
+                {
+                    options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
+                        sql => sql.MigrationsAssembly(assembly));
+                })
                 //.AddSigningCredential(certificate);
-                .AddInMemoryApiResources(Configuration.GetApis())
-                .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
-                .AddInMemoryClients(Configuration.GetClients())
+
+                //Use InMemory
+                //.AddInMemoryApiResources(Configuration.GetApis())
+                //.AddInMemoryIdentityResources(Configuration.GetIdentityResources())
+                //.AddInMemoryClients(Configuration.GetClients())
                 .AddDeveloperSigningCredential();
 
-            services.AddAuthentication()
-                .AddFacebook(config => {
-                    config.AppId = "3396617443742614";
-                    config.AppSecret = "secret";
-                });
+            //services.AddAuthentication()
+            //    .AddFacebook(config => {
+            //        config.AppId = "3396617443742614";
+            //        config.AppSecret = "secret";
+            //    });
 
             services.AddControllersWithViews();
         }

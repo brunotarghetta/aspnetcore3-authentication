@@ -26,7 +26,9 @@ export class AppComponent {
   callApi() {
     const token = this.oidcSecurityService.getToken();
 
-    this.http.get("http://localhost:5002/secret", {
+    //this.http.get("http://localhost:5002/secret", {
+    //this.http.get("https://localhost:44337/secret", {
+    this.http.get("http://localhost:81/apione/secret", {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
       }),

@@ -3,6 +3,7 @@ using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
@@ -15,6 +16,11 @@ namespace IdentityServer
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
+
+
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false)
+                .Build();
 
             using (var scope = host.Services.CreateScope())
             {
@@ -29,39 +35,41 @@ namespace IdentityServer
                     new Claim("rc.api.garndma", "big.api.cookie"))
                     .GetAwaiter().GetResult();
 
-                //scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>()
-                //    .Database.Migrate();
 
-                //var context = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+                //Use Database
+                scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>()
+                    .Database.Migrate();
 
-                //context.Database.Migrate();
+                var context = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
 
-                //if (!context.Clients.Any())
-                //{
-                //    foreach (var client in Configuration.GetClients())
-                //    {
-                //        context.Clients.Add(client.ToEntity());
-                //    }
-                //    context.SaveChanges();
-                //}
+                context.Database.Migrate();
 
-                //if (!context.IdentityResources.Any())
-                //{
-                //    foreach (var resource in Configuration.GetIdentityResources())
-                //    {
-                //        context.IdentityResources.Add(resource.ToEntity());
-                //    }
-                //    context.SaveChanges();
-                //}
+                if (!context.Clients.Any())
+                {
+                    foreach (var client in Configuration.GetClients(config))
+                    {
+                        context.Clients.Add(client.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
 
-                //if (!context.ApiResources.Any())
-                //{
-                //    foreach (var resource in Configuration.GetApis())
-                //    {
-                //        context.ApiResources.Add(resource.ToEntity());
-                //    }
-                //    context.SaveChanges();
-                //}
+                if (!context.IdentityResources.Any())
+                {
+                    foreach (var resource in Configuration.GetIdentityResources())
+                    {
+                        context.IdentityResources.Add(resource.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+
+                if (!context.ApiResources.Any())
+                {
+                    foreach (var resource in Configuration.GetApis())
+                    {
+                        context.ApiResources.Add(resource.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
             }
 
             host.Run();

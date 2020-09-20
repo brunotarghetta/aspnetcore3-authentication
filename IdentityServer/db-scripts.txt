@@ -1,8 +1,13 @@
-﻿dotnet ef migrations add InitialIdentityServerPersistedGrantDbMigration -c PersistedGrantDbContext -o Data/Migrations/IdentityServer/PersistedGrantDb
+﻿//Instaladores necesarios de CLI
+dotnet tool install --global dotnet-ef
+dotnet add package Microsoft.EntityFrameworkCore.Design
+
+//Crea file de migration para las bases de Persisted y Configuration
+dotnet ef migrations add InitialIdentityServerPersistedGrantDbMigration -c PersistedGrantDbContext -o Data/Migrations/IdentityServer/PersistedGrantDb
 dotnet ef migrations add InitialIdentityServerConfigurationDbMigration -c ConfigurationDbContext -o Data/Migrations/IdentityServer/ConfigurationDb
-
 dotnet ef migrations add <name> -c AppDbContext -o Data/Migrations/AppMigrations
-dotnet ef database update -c AppDbContext
 
+//Imapcta scripts en base
+dotnet ef database update -c AppDbContext
 dotnet ef database update -c PersistedGrantDbContext
 dotnet ef database update -c ConfigurationDbContext

@@ -1,5 +1,6 @@
 ﻿using IdentityModel.Client;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -9,27 +10,30 @@ namespace ApiTwo.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public HomeController(IHttpClientFactory httpClientFactory)
+        public IConfiguration _config { get; }
+
+        public HomeController(IHttpClientFactory httpClientFactory, IConfiguration config)
         {
             _httpClientFactory = httpClientFactory;
+            _config = config;
         }
 
-        [Route("/home")]
+        [Route("/")]
         public async Task<IActionResult> Index()
         {
             //retrieve access token
             var serverClient = _httpClientFactory.CreateClient();
 
-            var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync("https://localhost:44305/");
+            var identiyServerUrl = _config.GetSection("Servers").GetSection("IdentityServer").Value;
+
+            var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync(identiyServerUrl);
 
             var tokenResponse = await serverClient.RequestClientCredentialsTokenAsync(
                 new ClientCredentialsTokenRequest
                 {
                     Address = discoveryDocument.TokenEndpoint,
-
                     ClientId = "client_id",
                     ClientSecret = "client_secret",
-
                     Scope = "ApiOne",
                 });
 
@@ -38,7 +42,9 @@ namespace ApiTwo.Controllers
 
             apiClient.SetBearerToken(tokenResponse.AccessToken);
 
-            var response = await apiClient.GetAsync("https://localhost:44337/secret");
+            var apiOneUrl = _config.GetSection("Servers").GetSection("ApiOne").Value;
+
+            var response = await apiClient.GetAsync($"{apiOneUrl}/secret");
 
             var content = await response.Content.ReadAsStringAsync();
 

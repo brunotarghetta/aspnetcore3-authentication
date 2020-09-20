@@ -1,17 +1,19 @@
 ﻿using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 
 namespace IdentityServer
 {
     public static class Configuration
     {
+       
         public static IEnumerable<IdentityResource> GetIdentityResources() =>
             new List<IdentityResource>
             {
                 new IdentityResources.OpenId(),
-                //new IdentityResources.Profile(),
+                new IdentityResources.Profile(),
                 new IdentityResource
                 {
                     Name = "rc.scope",
@@ -28,7 +30,7 @@ namespace IdentityServer
                 new ApiResource("ApiTwo", new string[] { "rc.api.garndma" }),
             };
 
-        public static IEnumerable<Client> GetClients() =>
+        public static IEnumerable<Client> GetClients(IConfiguration config) =>
             new List<Client> {
                 new Client {
                     ClientId = "client_id",
@@ -43,16 +45,16 @@ namespace IdentityServer
                     ClientSecrets = { new Secret("client_secret_mvc".ToSha256()) },
 
                     AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true,
-
-                    RedirectUris = { "https://localhost:44322/signin-oidc" },
-                    PostLogoutRedirectUris = { "https://localhost:44322/Home/Index" },
+                    //RequirePkce = true,
+                    
+                    RedirectUris = { $"{config.GetSection("Servers").GetSection("MvcClient").Value}/signin-oidc" },
+                    PostLogoutRedirectUris = { $"{config.GetSection("Servers").GetSection("MvcClient").Value}/Home/Index" },
 
                     AllowedScopes = {
                         "ApiOne",
                         "ApiTwo",
                         IdentityServerConstants.StandardScopes.OpenId,
-                        //IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Profile,
                         "rc.scope",
                     },
 
@@ -65,12 +67,12 @@ namespace IdentityServer
                     ClientId = "client_id_js",
 
                     AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true,
+                    //RequirePkce = true,
                     RequireClientSecret = false,
 
-                    RedirectUris = { "https://localhost:44345/home/signin" },
-                    PostLogoutRedirectUris = { "https://localhost:44345/Home/Index" },
-                    AllowedCorsOrigins = { "https://localhost:44345" },
+                    RedirectUris = { $"{config.GetSection("Servers").GetSection("JavascriptClient").Value}/home/signin" },
+                    PostLogoutRedirectUris = { $"{config.GetSection("Servers").GetSection("JavascriptClient").Value}/Home/Index" },
+                    AllowedCorsOrigins = { $"{config.GetSection("Servers").GetSection("JavascriptClient").Value}" },
 
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -89,12 +91,16 @@ namespace IdentityServer
                     ClientId = "angular",
 
                     AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true,
+                    //RequirePkce = true,
                     RequireClientSecret = false,
 
-                    RedirectUris = { "http://localhost:4200" },
-                    PostLogoutRedirectUris = { "http://localhost:4200" },
-                    AllowedCorsOrigins = { "http://localhost:4200" },
+                    //RedirectUris = { "http://localhost:4200" },
+                    //PostLogoutRedirectUris = { "http://localhost:4200" },
+                    //AllowedCorsOrigins = { "http://localhost:4200" },
+                    
+                    RedirectUris = { "http://localhost:81/angularclient/" },
+                    PostLogoutRedirectUris = { "http://localhost:81/angularclient/" },
+                    AllowedCorsOrigins = { "http://localhost:81/angularclient/" },
 
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -109,7 +115,7 @@ namespace IdentityServer
                     ClientId = "wpf",
 
                     AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true,
+                    //RequirePkce = true,
                     RequireClientSecret = false,
 
                     RedirectUris = { "http://localhost/sample-wpf-app" },
@@ -127,7 +133,7 @@ namespace IdentityServer
                     ClientId = "xamarin",
 
                     AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true,
+                    //RequirePkce = true,
                     RequireClientSecret = false,
 
                     RedirectUris = { "xamarinformsclients://callback" },
@@ -140,11 +146,11 @@ namespace IdentityServer
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = false,
                 },
-		new Client {
+		        new Client {
                     ClientId = "flutter",
 
                     AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true,
+                    //RequirePkce = true,
                     RequireClientSecret = false,
 
                     RedirectUris = { "http://localhost:4000/" },

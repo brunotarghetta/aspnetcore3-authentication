@@ -37,6 +37,7 @@
                 }
               ],
               "optimization": true,
+              "baseHref": "/AngularClient/",
               "outputHashing": "all",
               "sourceMap": false,
               "extractCss": true,
@@ -119,6 +120,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "angular-app"
+    }
+  },
+  "defaultProject": "angular-app",
+  "cli": {
+    "analytics": "33a0c310-46bc-4412-b009-626298f9617e"
+  }
 }
