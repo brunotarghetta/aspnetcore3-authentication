@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="wwwroot\css\bootstrap-theme.css" />
+    <None Remove="wwwroot\css\bootstrap-theme.css.map" />
+    <None Remove="wwwroot\css\bootstrap-theme.min.css" />
+    <None Remove="wwwroot\css\Site.css" />
+  </ItemGroup>
+
+  <ItemGroup>
       <PackageReference Include="IdentityServer4.AspNetIdentity" Version="3.0.2" />
       <PackageReference Include="IdentityServer4.EntityFramework" Version="3.0.2" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="3.0.0" />
@@ -17,6 +24,10 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.1" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.1" />
     <PackageReference Include="IdentityServer4" Version="3.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\less\bootstrap-theme.min.css.map" />
   </ItemGroup>
 
 </Project>

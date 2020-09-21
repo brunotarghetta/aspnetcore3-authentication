@@ -101,6 +101,8 @@ namespace IdentityServer
 
             app.UseIdentityServer();
 
+            app.UseStaticFiles();
+
             if(_env.IsDevelopment())
             {
                 app.UseCookiePolicy(new CookiePolicyOptions()
