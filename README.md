@@ -13,3 +13,7 @@ This repo is for my Youtube tutorial that can be found here: https://www.youtube
 - http://localhost:81/MVCClient/Home/Secret
 - http://localhost:81/AngularClient/
 - http://localhost:81/JavascriptClient/
+
+
+# To test IS4
+http://localhost:81/IdentityServer/.well-known/openid-configuration
